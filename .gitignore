@@ -150,5 +150,5 @@ notebook/templates/*.html
 tmp/
 
 
-
 .env
+venv
