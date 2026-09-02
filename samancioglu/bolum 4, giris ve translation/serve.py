@@ -13,7 +13,7 @@ load_dotenv()
 llm = ChatOpenAI(
     model="gemini-3.6-flash",
     api_key = os.getenv("GEMINI_API_KEY"),
-    base_url = os.getenv("BASE_URL")
+    base_url = os.getenv("GEMINI_BASE_URL")
 )
 
 
