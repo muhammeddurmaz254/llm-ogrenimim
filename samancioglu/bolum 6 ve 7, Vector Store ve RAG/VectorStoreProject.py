@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_core.runnables import RunnableLambda, RunnablePassthrough
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
 
 load_dotenv()
 
@@ -41,5 +44,28 @@ VectorStore = Chroma.from_documents(
     embedding=embeddings
 )
 
+retriever =RunnableLambda(VectorStore.similarity_search_with_score).bind(k=1)
+
+llm = ChatOpenAI(
+    model="gemini-3.6-flash",
+    api_key = os.getenv("GEMINI_API_KEY"),
+    base_url = os.getenv("GEMINI_BASE_URL")
+)
+
+message = """
+Answer this question using the provided context only.
+
+{question}
+
+Context:
+
+{context}
+"""
+
+prompt = ChatPromptTemplate.from_messages([("human", message)])
+
+chain = {"context": retriever, "question": RunnablePassthrough() } | prompt | llm
+
 if __name__ == "__main__":
-    print(VectorStore.similarity_search_with_score("dogs are loyal pets"))
+    response = chain.invoke("tell me about cats")
+    print(response.content)
