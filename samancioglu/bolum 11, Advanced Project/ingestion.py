@@ -14,12 +14,17 @@ urls = [
     "https://lilianweng.github.io/posts/2023-10-25-adv-attack-llm/"
 ]
 
+embeddings=GoogleGenerativeAIEmbeddings(
+    model="models/gemini-embedding-001",
+    google_api_key=os.getenv("GEMINI_API_KEY"),
+)
+
 docs = [WebBaseLoader(url).load() for url in urls]
 docs_list = [item for sublist in docs for item in sublist]
 
 text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-    chunk_size=250,
-    chunk_overlap=0
+    chunk_size=2000,
+    chunk_overlap=200
 )
 
 splits = text_splitter.split_documents(docs_list)
@@ -27,14 +32,11 @@ splits = text_splitter.split_documents(docs_list)
 vector_store = Chroma.from_documents(
     documents=splits,
     collection_name="rag-chroma-lilianweng",
-    embedding=GoogleGenerativeAIEmbeddings(
-        model="gemini-embedding-001",
-        google_api_key=os.getenv("GEMINI_API_KEY"),
-    ),
+    embedding=embeddings,
     persist_directory="./.chroma"
 )
 
-retrievet = Chroma(
+retriever = Chroma(
     collection_name="rag-chroma-lilianweng",
     persist_directory="./.chroma",
     embedding=GoogleGenerativeAIEmbeddings(

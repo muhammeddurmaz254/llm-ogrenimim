@@ -20,7 +20,8 @@ class RouteQuery(BaseModel):
 llm = ChatOpenAI(
     model="gemini-3.6-flash",
     api_key = os.getenv("GEMINI_API_KEY"),
-    base_url = os.getenv("GEMINI_BASE_URL")
+    base_url = os.getenv("GEMINI_BASE_URL"),
+    temperature=0
 )
 
 structured_llm_router = llm.with_structured_output(RouteQuery)
