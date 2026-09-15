@@ -26,7 +26,7 @@ class GradeHallucination(BaseModel):
 
 llm.with_structured_output(GradeHallucination)
 
-structured_llm_grader = llm.with_name(GradeHallucination)
+structured_llm_grader = llm.with_structured_output(GradeHallucination)
 
 system_prompt = """
 You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts.
