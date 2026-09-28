@@ -1,4 +1,5 @@
 from langchain_openai import ChatOpenAI
+from graph.chains.rate_limiter import rate_limiter
 from langchain_core.output_parsers import StrOutputParser
 from langsmith import Client
 import os
@@ -7,10 +8,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 llm = ChatOpenAI(
-    model="gemini-3.6-flash",
-    api_key = os.getenv("GEMINI_API_KEY"),
-    base_url = os.getenv("GEMINI_BASE_URL"),
-    temperature=0
+    model="nvidia/nemotron-3-super-120b-a12b",
+    api_key = os.getenv("NVIDIA_API_KEY"),
+    base_url = "https://integrate.api.nvidia.com/v1",
+    temperature=0,
+    rate_limiter=rate_limiter
 )
 
 client = Client()
